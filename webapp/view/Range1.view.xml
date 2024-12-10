@@ -1,0 +1,43 @@
+<mvc:View xmlns:table="sap.ui.table" xmlns:unified="sap.ui.unified" controllerName="cal.as.sap.calendarcustom.controller.Range1"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m">
+    <Page id="page" title="{i18n>title}" floatingFooter="true">
+    <content>
+    <Panel expand="true" expandable="true" expanded="true" expandAnimation="true" headerText="Project Range In Calendar " class="sapUiSmallMargin" width="auto">
+    <content>
+    <unified:Calendar id="SetCalendarId" intervalSelection="true" width="100%"></unified:Calendar>
+    </content>
+    </Panel>
+   <!-- <Panel headerText="Project Range In Table " class="sapUiSmallMargin" width="auto">
+   <content>
+   <Table id="ProjectTableCalId" width="100%" >
+</Table>
+
+   </content>
+    </Panel> -->
+   
+    <Panel   headerText="Project Range In Table " class="sapUiSmallMargin" width="auto" height="auto">
+    <content>
+     <table:Table id="UiTable" rowActionCount="1" width="100%" alternateRowColors="true" visibleRowCount="12" selectionMode="None"  fixedColumnCount="1"  rows="{TableCalendarSelect>/}">
+<table:rowActionTemplate>
+<table:RowAction >
+<table:items>
+<table:RowActionItem type="Navigation" press="NavigationPress" visible="true"></table:RowActionItem>
+
+</table:items>
+</table:RowAction>
+</table:rowActionTemplate>
+</table:Table>
+    </content>
+    </Panel>
+
+    </content>
+    <footer>
+    <Bar >
+    <contentRight>
+    <Button text="Submit" press="SubmitDateRangePress"></Button>
+    </contentRight>
+    </Bar>
+    </footer>
+    </Page>
+</mvc:View>
