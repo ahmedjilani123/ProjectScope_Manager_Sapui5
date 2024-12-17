@@ -1,13 +1,35 @@
 sap.ui.define([
-    "sap/ui/core/mvc/Controller",
+    "./Basecontroller",
     "sap/m/MessageBox",
-    "sap/m/MessageToast"
-], (Controller, MessageBox,MessageToast) => {
+    "sap/m/MessageToast",
+    'sap/ui/model/json/JSONModel',
+    "sap/ui/core/library",
+    "sap/ui/unified/library",
+    'sap/ui/unified/CalendarLegendItem',
+    'sap/ui/unified/DateTypeRange'
+], (Basecontroller, MessageBox, MessageToast, JSONModel, CoreLibrary, UnifiedLibrary, CalendarLegendItem, DateTypeRange) => {
     "use strict";
     let TableSelctObj = {};
-    return Controller.extend("cal.as.sap.calendarcustom.controller.Range1", {
-        onInit() {},
+    var CalendarDayType = UnifiedLibrary.CalendarDayType,
+        ValueState = CoreLibrary.ValueState;
+    return Basecontroller.extend("cal.as.sap.calendarcustom.controller.Range1", {
+        onInit() { },
         onAfterRendering() {
+            this.SelectionYearChange();
+            this.CreateDialog = undefined;
+            if (!this.CreateDialog) {
+                this.CreateDialog = new sap.ui.xmlfragment("cal.as.sap.calendarcustom.Fragments.UserLogin", this);
+                this.getView().addDependent(this.CreateDialog);
+            }
+            this.CreateDialog.open();
+            const oLegend = this.byId("legend");
+            oLegend.setStandardItems([""])
+            var getAlldata = JSON.parse(localStorage.getItem("table"));
+            var modelss = this.getView().getModel("TableCalendarSelect");
+            modelss.setProperty("/CreateData", false);
+            modelss.setProperty("/dayTable", getAlldata);
+            modelss.refresh(true);
+
             // var oTable = this.getView().byId("ProjectTableCalId"),dates=0;
             // let arr=["Tablet","Large","Small","Desktop"];
             // while(dates<= 31) {
@@ -35,81 +57,199 @@ sap.ui.define([
             // }
             // const ColumnListItem = new sap.m.ColumnListItem({cells: Cells})
             // oTable.bindItems("TableCalendarSelect>/", ColumnListItem);
-            var oUiTable = this.getView().byId("UiTable");
-           
-            var dates = 0;
-            while (dates <= 31) {
-                var columss;
-                if (dates == 0) {
-                    columss = new sap.ui.table.Column({
-                        width: "6em",
-                        label: new sap.m.Text({ text: "Months 2024" }),
-                        template: new sap.m.Text({ text: "{TableCalendarSelect>Month}" }),
-                    });
-                } else {
-                    columss = new sap.ui.table.Column({
-                        width: "4em",
-                        label: new sap.m.Text({ text: dates }),
-                        template: new sap.m.Button({ fieldGroupIds: `{TableCalendarSelect>D${dates}}`, visible: "{= ${TableCalendarSelect>D" + dates + "} ? true : false}", press: this.UiButtonHandler }),
-                    });
-                }
-                oUiTable.addColumn(columss);
-                dates += 1;
-            }
-            oUiTable.bindRows("TableCalendarSelect>/");
+
         },
-        NavigationPress(e){
-debugger
+        NavigationPress(e) {
+            debugger
         },
         UiButtonHandler: function (e) {
-            if (TableSelctObj?.from) {
-                if (TableSelctObj.submit) {
-                    MessageBox.alert("please submit the selected date first");
-                    return;
-                }
-                if (TableSelctObj.Month === e.getSource().getParent().getAggregation("cells")[0].getText()) {
-                    let from = parseInt(TableSelctObj.from.split("-").pop());
-                    let to = parseInt(e.getSource().getProperty("fieldGroupIds")[0].split("-").pop());
-                    const toCheck = new Date(e.getSource().getProperty("fieldGroupIds")[0]);
-                    const fromCheck =new Date(TableSelctObj.from);
-                    if(toCheck < fromCheck) {
-                        MessageToast.show("you must select a above date");
+            debugger
+            let modelss =e.getSource().getBindingContext("TableCalendarSelect").getObject()
+            let SelectAUniqID = modelss.UniqID
+            let stringsIfy = JSON.stringify(modelss);
+            let modelssC = JSON.parse(stringsIfy);
+            var currentModel= this.getOwnerComponent().getModel("RunTimeModel").getData();
+            var seperate = e.getSource().getProperty("fieldGroupIds")[0].split("|");
+            if(modelssC.rangeFromS && modelssC.rangeToS && modelssC.setFrom && modelssC.setTo){
+                if(currentModel.setFrom){
+                    if(currentModel.setTo){
+                        let from = parseInt(currentModel.rangeFromS);
+                        let to = parseInt(currentModel.rangeToS);
+                        while (from <= to) {
+                            e.getSource().getParent().getAggregation("cells")[from].setType("Default");
+                            from += 1;
+                        }
+                        modelssC.rangeFromS =parseInt(seperate[0]);
+                        modelssC.setFrom =seperate[1]
+                        modelssC.setTo=undefined;
+                        var model= this.getView().getModel("RunTimeModel");
+                        model.setData(modelssC);
+                        model.refresh(true);
+                        e.getSource().setType("Emphasized");
                         return;
                     }
+                    let from = parseInt(currentModel.rangeFromS);
+                    let to = parseInt(seperate[0]);
                     while (from <= to) {
-                        e.getSource().getParent().getAggregation("cells")[from].setType("Emphasized");
-                        e.getSource().getParent().getAggregation("cells")[from].setEnabled(false);
+                        if(to <=5){
+                            e.getSource().getParent().getAggregation("cells")[from].setType("Accept");
+                            e.getSource().setType("Accept");
+                        }else if(to <=10){
+                            e.getSource().getParent().getAggregation("cells")[from].setType("Reject");
+                            e.getSource().setType("Reject");
+    
+                        }else if(to >=10){ 
+                            e.getSource().getParent().getAggregation("cells")[from].setType("Emphasized");
+                            e.getSource().setType("Emphasized");
+                        }
                         from += 1;
                     }
-                    TableSelctObj.to = e.getSource().getProperty("fieldGroupIds")[0];
-                    TableSelctObj.submit="yes"
+                    // final data source
+                    currentModel.setTo = seperate[1];
+                    currentModel.rangeToS =to;
+                    var model= this.getView().getModel("RunTimeModel");
+                    model.setData(currentModel);
+                    model.refresh(true);
 
-                } else {
-                    MessageBox.alert("Please select a correct month");
+                }else{
+                    var rangess = modelssC.rangeFromS; // main model data source
+                    while (rangess <= modelssC.rangeToS) {
+                        e.getSource().getParent().getAggregation("cells")[rangess].setType("Default");
+                        rangess += 1;
+                    }
+                    delete modelssC.rangeToS;
+                    delete modelssC.rangeFromS;
+                    delete modelssC.setFrom;
+                    delete modelssC.setTo;
+                    modelssC.rangeFromS =parseInt(seperate[0]);
+                    modelssC.setFrom =seperate[1]
+                    modelssC.setTo=undefined;
+                    var model= this.getView().getModel("RunTimeModel");
+                    model.setData(modelssC);
+                    model.refresh(true);
+                    e.getSource().setType("Emphasized");
                 }
-            } else {
-                    var currentDate = new Date();
-                    var from =new Date(e.getSource().getProperty("fieldGroupIds")[0]);
-        if(from < currentDate){
-        MessageToast.show("previous date selected");
-        return 
-        }
-                TableSelctObj.Month = e.getSource().getParent().getAggregation("cells")[0].getText();
-                TableSelctObj.from = e.getSource().getProperty("fieldGroupIds")[0];
-                e.getSource().setType("Emphasized");
+              
+                return; 
+                // model changes end ---
+            }else{
+                if (TableSelctObj.MainFrom) {
+               
+                    if(TableSelctObj.setTo){
+                        let from = parseInt(TableSelctObj.rangeFrom);
+                        let to = parseInt(TableSelctObj.rangeToS);
+                        while (from <= to) {
+                            e.getSource().getParent().getAggregation("cells")[from].setType("Default");
+                            from += 1;
+                        }
+                        TableSelctObj.rangeFrom=parseInt(seperate[0]);
+                        TableSelctObj.setTo=undefined;
+                        TableSelctObj.MainFrom = seperate[1]
+                        e.getSource().setType("Emphasized");
+                        return;
+                    }
+                    let from = parseInt(TableSelctObj.rangeFrom);
+                    let to = parseInt(seperate[0]);
+                    while (from <= to) {
+                        if(to <=5){
+                            e.getSource().getParent().getAggregation("cells")[from].setType("Accept");
+                            e.getSource().setType("Accept");
+                        }else if(to <=10){
+                            e.getSource().getParent().getAggregation("cells")[from].setType("Reject");
+                            e.getSource().setType("Reject");
+    
+                        }else if(to >=10){ 
+                            e.getSource().getParent().getAggregation("cells")[from].setType("Emphasized");
+                            e.getSource().setType("Emphasized");
+                        }
+                        from += 1;
+                    }
+                    TableSelctObj.setTo = seperate[1];
+                    TableSelctObj.UniqIds = SelectAUniqID;
+                    TableSelctObj.rangeFromS =parseInt(TableSelctObj.rangeFrom);
+                    TableSelctObj.rangeToS =to;
+                   
+                } else {
+                    TableSelctObj.rangeFrom = parseInt(seperate[0]);
+                    TableSelctObj.MainFrom = seperate[1]
+                    e.getSource().setType("Emphasized");
+                }
             }
+           
         },
-        SubmitDateRangePress(e) {
+        SubmitDateRangePress() {
+            console.log(TableSelctObj);
             debugger
-            var oCalendar = this.getView().byId("SetCalendarId");
-            var oDateRange = new sap.ui.unified.DateRange({
-                startDate: new Date(TableSelctObj.from),
-                endDate: new Date(TableSelctObj.to)
-            });
+            var modelData = this.getView().getModel("RunTimeModel").getData();
+            var currentJson = JSON.parse(localStorage.getItem("table")) || [];
+            if(modelData?.setFrom){
+                currentJson.forEach((ele, i) => {
+                    if (ele.UniqID == modelData.UniqID) {
+                        currentJson[i]=modelData;
+                    }
+                })
+                var model = this.getView().getModel("TableCalendarSelect");
+                localStorage.setItem("table", JSON.stringify(currentJson));
+                model.setProperty('/dayTable', currentJson);
+                model.refresh(true);
+                var ChangeModel =this.getView().getModel("RunTimeModel");
+                ChangeModel.setData({});
+                ChangeModel.refresh(true);
+                return;
 
-            oCalendar.addSelectedDate(oDateRange);
-            TableSelctObj = {};
-            MessageToast.show("Submit Date Range")
+            }
+            if (TableSelctObj?.MainFrom) {
+                var userLogin = this.getView().getModel("TableCalendarSelect").getData().UserLogin;
+                let MainModelTable = this.getView().getModel("TableCalendarSelect").getData().dayTable;
+                
+                if (this.getView().getModel("TableCalendarSelect").getData().CreateData) {
+                    MainModelTable.forEach((item, i) => {
+                        if (item.UserRole == userLogin) {
+                            item.setFrom = TableSelctObj.MainFrom;
+                            item.setTo = TableSelctObj.setTo;
+                            item.rangeFromS=TableSelctObj.rangeFromS;
+                            item.rangeToS=TableSelctObj.rangeToS;
+                        }
+                        currentJson.push(item);
+                    })
+                } else {
+                    if (currentJson.length > 0) {
+                        currentJson.forEach((ele, i) => {
+                            if (ele.UniqID == TableSelctObj.UniqIds && ele.UserRole === userLogin) {
+                                ele.setFrom = TableSelctObj.MainFrom;
+                                ele.setTo = TableSelctObj.setTo;
+                                ele.rangeFromS=TableSelctObj.rangeFromS;
+                                ele.rangeToS=TableSelctObj.rangeToS;
+                            }
+                        })
+                    } else {
+                        MainModelTable.forEach((item, i) => {
+                            if (item.UserRole == userLogin) {
+                                item.setFrom = TableSelctObj.MainFrom;
+                                item.setTo = TableSelctObj.setTo;
+                                item.rangeFromS=TableSelctObj.rangeFromS;
+                                item.rangeToS=TableSelctObj.rangeToS;
+                            }
+                            currentJson.push(item);
+                        })
+                    }
+                }
+                var model = this.getView().getModel("TableCalendarSelect");
+                localStorage.setItem("table", JSON.stringify(currentJson));
+                model.setProperty('/dayTable', currentJson);
+                model.refresh(true);
+                TableSelctObj = {};
+            } else {
+                sap.m.MessageToast.show("Please select your project durations...");
+            }
+
+        },
+        UserLoginPress1: function (e) {
+            let User = e.getSource().getParent().getContent()[0].getSelectedIndex() == 0 ? 'User1' : 'User2';
+            var model = this.getView().getModel("TableCalendarSelect");
+            model.setProperty('/UserLogin', User);
+            model.refresh(true);
+            e.getSource().getParent().close();
         }
     });
 });

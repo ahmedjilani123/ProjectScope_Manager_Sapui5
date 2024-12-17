@@ -1,43 +1,178 @@
-<mvc:View xmlns:table="sap.ui.table" xmlns:unified="sap.ui.unified" controllerName="cal.as.sap.calendarcustom.controller.Range1"
+<mvc:View
+    xmlns:macros="sap.fe.macros"
+    xmlns:form="sap.ui.layout.form"
+    xmlns:table="sap.ui.table"
+    xmlns:unified="sap.ui.unified"
+    controllerName="cal.as.sap.calendarcustom.controller.Range1"
     xmlns:mvc="sap.ui.core.mvc"
-    xmlns="sap.m">
-    <Page id="page" title="{i18n>title}" floatingFooter="true">
-    <content>
-    <Panel expand="true" expandable="true" expanded="true" expandAnimation="true" headerText="Project Range In Calendar " class="sapUiSmallMargin" width="auto">
-    <content>
-    <unified:Calendar id="SetCalendarId" intervalSelection="true" width="100%"></unified:Calendar>
-    </content>
-    </Panel>
-   <!-- <Panel headerText="Project Range In Table " class="sapUiSmallMargin" width="auto">
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+>
+    <Page
+        id="page"
+        title="{i18n>title}"
+        floatingFooter="true"
+    >
+        <content>
+            <Panel
+                expand="true"
+                expandable="true"
+                expanded="true"
+                expandAnimation="true"
+                headerText="Project Range In Calendar "
+                class="sapUiSmallMargin"
+                width="auto"
+            >
+                <content>
+                    <form:Form editable="true">
+                        <form:layout>
+                            <form:ResponsiveGridLayout
+                                labelSpanXL="3"
+                                labelSpanL="3"
+                                labelSpanM="3"
+                                labelSpanS="12"
+                                adjustLabelSpan="false"
+                                emptySpanXL="4"
+                                emptySpanL="4"
+                                emptySpanM="4"
+                                emptySpanS="0"
+                                columnsXL="1"
+                                columnsL="1"
+                                columnsM="1"
+                                singleContainerFullSize="false"
+                            />
+                        </form:layout>
+                        <form:formContainers>
+                            <form:FormContainer>
+                                <form:formElements>
+                                    <form:FormElement label="From">
+                                        <form:fields>
+                                            <DatePicker
+                                                required="true"
+                                                id="DP10"
+                                                value="{
+						'path': 'TableCalendarSelect>/FromDate',
+						'type': 'sap.ui.model.type.Date',
+						'formatOptions': {
+							'pattern': 'MM-y'
+						}
+					}"
+                                                change="handleChange"
+                                            />
+                                        </form:fields>
+                                    </form:FormElement>
+                                    <form:FormElement label="To">
+                                        <form:fields>
+                                            <DatePicker
+                                                required="true"
+                                                class="sapUiTinyMarginTop"
+                                                id="DP1"
+                                                value="{
+						'path': 'TableCalendarSelect>/ToDate',
+						'type': 'sap.ui.model.type.Date',
+						'formatOptions': {
+							'pattern': 'MM-y'
+						}
+					}"
+                                                change="handleChange"
+                                            />
+                                        </form:fields>
+                                    </form:FormElement>
+                                    <form:FormElement label="Project Name">
+                                        <form:fields>
+                                           <Input value="{TableCalendarSelect>/ProjectName}"></Input>
+                                        </form:fields>
+                                    </form:FormElement>
+                                     <form:FormElement label="Project Description">
+                                        <form:fields>
+                                           <Input value="{TableCalendarSelect>/ProjectDesc}"></Input>
+                                        </form:fields>
+                                    </form:FormElement>
+                                </form:formElements>
+                            </form:FormContainer>
+                        </form:formContainers>
+                    </form:Form>
+                    <HBox
+                        alignContent="Center"
+                        alignItems="Center"
+                        justifyContent="SpaceBetween"
+                        width="100%"
+                    >
+                        <VBox width="100%">
+                            <unified:CalendarLegend id="legend">
+                                <unified:items>
+                                    <unified:CalendarLegendItem
+                                        type="Type03"
+                                        text="Short-Term"
+                                    />
+                                    <unified:CalendarLegendItem
+                                        type="Type06"
+                                        text="Long-Term"
+                                    />
+                                    <unified:CalendarLegendItem
+                                        type="Type08"
+                                        text="Very Short-Term"
+                                    />
+                                </unified:items>
+                            </unified:CalendarLegend>
+                        </VBox>
+
+                        <Button
+                            text="Submit"
+                            press="SubmitProjectDetailsHandler"
+                        />
+                    </HBox>
+                </content>
+            </Panel>
+            <!-- <Panel headerText="Project Range In Table " class="sapUiSmallMargin" width="auto">
    <content>
    <Table id="ProjectTableCalId" width="100%" >
 </Table>
 
    </content>
     </Panel> -->
-   
-    <Panel   headerText="Project Range In Table " class="sapUiSmallMargin" width="auto" height="auto">
-    <content>
-     <table:Table id="UiTable" rowActionCount="1" width="100%" alternateRowColors="true" visibleRowCount="12" selectionMode="None"  fixedColumnCount="1"  rows="{TableCalendarSelect>/}">
-<table:rowActionTemplate>
-<table:RowAction >
-<table:items>
-<table:RowActionItem type="Navigation" press="NavigationPress" visible="true"></table:RowActionItem>
 
-</table:items>
-</table:RowAction>
-</table:rowActionTemplate>
-</table:Table>
-    </content>
-    </Panel>
-
-    </content>
-    <footer>
-    <Bar >
-    <contentRight>
-    <Button text="Submit" press="SubmitDateRangePress"></Button>
-    </contentRight>
-    </Bar>
-    </footer>
+            <Panel
+                headerText="Project Range In Table "
+                class="sapUiSmallMargin"
+                width="auto"
+                height="auto"
+            >
+                <content>
+                    <table:Table
+                        id="UiTable"
+                        rowActionCount="1"
+                        width="100%"
+                        alternateRowColors="true"
+                        
+                        selectionMode="None"
+                        fixedColumnCount="1"
+                        rows="{TableCalendarSelect>/dayTable}"
+                    >
+                        <table:rowActionTemplate>
+                            <table:RowAction>
+                                <table:items>
+                                    <table:RowActionItem
+                                        type="Navigation"
+                                        press="NavigationPress"
+                                        visible="true"
+                                    />
+                                </table:items>
+                            </table:RowAction>
+                        </table:rowActionTemplate>
+                    </table:Table>
+                </content>
+            </Panel>
+        </content>
+        <footer>
+            <Bar>
+                <contentRight>
+                    <Button
+                        text="Send"
+                        press="SubmitDateRangePress"
+                    />
+                </contentRight>
+            </Bar>
+        </footer>
     </Page>
 </mvc:View>

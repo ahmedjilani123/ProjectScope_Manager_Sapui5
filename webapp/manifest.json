@@ -46,7 +46,7 @@
     }
   },
   "sap.ui5": {
-    "flexEnabled": true,
+    "flexEnabled": false,
     "dependencies": {
       "minUI5Version": "1.129.0",
       "libs": {
@@ -67,6 +67,9 @@
       },
       "TableCalendarSelect":{
         "type": "sap.ui.model.json.JSONModel"
+      },
+      "RunTimeModel":{
+         "type": "sap.ui.model.json.JSONModel"
       }
     },
     "resources": {
