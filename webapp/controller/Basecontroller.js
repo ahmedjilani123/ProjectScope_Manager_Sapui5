@@ -132,29 +132,6 @@ if(ValidateAll){
         
             return dateArray;
         },
-        typeEnabled(data,s){
-            if(s?.setFrom){
-                let dat = data?.split("-");
-                if (dat) {
-                    let fromDate = new Date(...s.setFrom.split("-").map(Number),'1','12','11').getTime();
-                    let toDate = new Date(...s.setTo.split("-").map(Number),'1','12','11').getTime();
-                    let date = new Date(...dat.map(Number),'1','12','11').getTime();
-                    var range = this.getDateRange(s.setFrom,s.setTo);
-                    if(date>=fromDate && date<=toDate){
-                        if(range.length <=5){
-                            return false;
-                        }else if(range.length <=10){
-                            return false;
-                        }else if(range.length >=10){ 
-                            return false;
-                        }
-                    }
-                   
-                }
-                    
-            }
-            return false;
-        },
         typeFormatter(data,s){
             if(s?.setFrom){
                 let dat = data?.split("-");
