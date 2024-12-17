@@ -49,7 +49,7 @@
                                         <form:fields>
                                             <DatePicker
                                                 required="true"
-                                                id="DP10"
+                                                id="FromDateID"
                                                 value="{
 						'path': 'TableCalendarSelect>/FromDate',
 						'type': 'sap.ui.model.type.Date',
@@ -66,7 +66,7 @@
                                             <DatePicker
                                                 required="true"
                                                 class="sapUiTinyMarginTop"
-                                                id="DP1"
+                                                id="ToDateID"
                                                 value="{
 						'path': 'TableCalendarSelect>/ToDate',
 						'type': 'sap.ui.model.type.Date',
@@ -80,7 +80,7 @@
                                     </form:FormElement>
                                     <form:FormElement label="Project Name">
                                         <form:fields>
-                                           <Input value="{TableCalendarSelect>/ProjectName}"></Input>
+                                           <Input id="InpuProjectID" value="{TableCalendarSelect>/ProjectName}" required="true"></Input>
                                         </form:fields>
                                     </form:FormElement>
                                      <form:FormElement label="Project Description">

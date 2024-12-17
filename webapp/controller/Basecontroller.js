@@ -26,52 +26,60 @@ let formatRange = 0;
             debugger
             var From_Date = this.getView().getModel("TableCalendarSelect").getData().FromDate;
             var To_Date = this.getView().getModel("TableCalendarSelect").getData().ToDate;
+            var projectDetail = this.getView().getModel("TableCalendarSelect").getData().ProjectName;
+            let DataOjb ={From_Date,To_Date,projectDetail};
+            let InputSource=[this.getView().byId("FromDateID"),this.getView().byId("ToDateID"),this.getView().byId("InpuProjectID")]
+             let ValidateAll = this.ValidationsAllInput(InputSource) // validate inputs method to identify the data
             let From_Month = new Date(From_Date);
             let To_Month = new Date(To_Date);
-
-            const months = [
-                "January", "February", "March", "April", "May", "June",
-                "July", "August", "September", "October", "November", "December"
-            ];
-            let GetMonthIndex = [];   // Get the index of the selected month
-            while (From_Month <= To_Month) {
-                let lastDay = new Date(From_Month.getFullYear(), From_Date.getMonth() + 1, 0).getDate();
-                GetMonthIndex.push({ month: From_Month.getMonth(), year: From_Month.getFullYear(), lastDay: lastDay });
-                From_Month.setMonth(From_Month.getMonth() + 1);
+if(ValidateAll){
+    const months = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ];
+    let GetMonthIndex = [];   // Get the index of the selected month
+    while (From_Month <= To_Month) {
+        let lastDay = new Date(From_Month.getFullYear(), From_Date.getMonth() + 1, 0).getDate();
+        GetMonthIndex.push({ month: From_Month.getMonth(), year: From_Month.getFullYear(), lastDay: lastDay });
+        From_Month.setMonth(From_Month.getMonth() + 1);
+    }
+    // -------------------------create a json model ----------------
+    const DayArrayValue = []; // Day Array 
+    ['User1', 'User2'].forEach((itemUser)=>{
+        let count =1;
+        let dayObj = { ProjectName: projectDetail +'-'+itemUser };
+        GetMonthIndex.forEach((item, i) => {
+            let day = 1;
+            while (day <= item.lastDay) {
+                dayObj["day" + item.year + day + item.month] = day;
+                dayObj["fullDay" + item.year + day + item.month] = `${item.year}-${item.month}-${day}`;
+                dayObj["FT"+ item.year + day + item.month]=count.toString()
+                dayObj.UniqID = Math.floor(10000 + Math.random() * 90000);
+                dayObj.UserRole =itemUser;
+                count++;
+                day += 1;
             }
-            // -------------------------create a json model ----------------
-            const DayArrayValue = []; // Day Array 
-            ['User1', 'User2'].forEach((itemUser)=>{
-                let count =1;
-                let dayObj = { ProjectName: this.getView().getModel("TableCalendarSelect").getData().ProjectName +'-'+itemUser };
-                GetMonthIndex.forEach((item, i) => {
-                    let day = 1;
-                    while (day <= item.lastDay) {
-                        dayObj["day" + item.year + day + item.month] = day;
-                        dayObj["fullDay" + item.year + day + item.month] = `${item.year}-${item.month}-${day}`;
-                        dayObj["FT"+ item.year + day + item.month]=count.toString()
-                        dayObj.UniqID = Math.floor(10000 + Math.random() * 90000);
-                        dayObj.UserRole =itemUser;
-                        count++;
-                        day += 1;
-                    }
-                })
-                DayArrayValue.push(dayObj);
-            })
-           
-            // ---------------------------end json model ----------------
-            let getModels = this.getView().getModel("TableCalendarSelect");
-            getModels.setSizeLimit(3000);
-            getModels.setProperty("/dayTable", DayArrayValue);
-            getModels.setProperty("/CreateData",true);
-            getModels.refresh(true);
-            this.TableBindingMethod(GetMonthIndex, this.getView().byId("UiTable"), months); // create the table binding
-        },
+        })
+        DayArrayValue.push(dayObj);
+    })
+   
+    // ---------------------------end json model ----------------
+    let getModels = this.getView().getModel("TableCalendarSelect");
+    getModels.setSizeLimit(3000);
+    getModels.setProperty("/dayTable", DayArrayValue);
+    getModels.setProperty("/CreateData",true);
+    getModels.refresh(true);
+    this.TableBindingMethod(GetMonthIndex, this.getView().byId("UiTable"), months); // create the table binding
+
+}else{
+    sap.m.MessageToast.show("please input field....");
+}
+              },
         TableBindingMethod(data, oUiTable, month) {
             debugger
             oUiTable.removeAllColumns();
             columss = new sap.ui.table.Column({
-                width: "6em",
+                width: "8em",
                 label: new sap.m.Text({ text: "Project Name" }),
                 template: new sap.m.Text({ text: "{TableCalendarSelect>ProjectName}" }),
             });
@@ -172,6 +180,25 @@ let formatRange = 0;
         // }  
             
             return 'Default';
+        },
+        ValidationsAllInput(source){
+            let bool=false;
+            let count=1;
+            source.forEach(item=>{
+                if(item.getValue().trim() == "" ){
+                    item.setValueState("Error");
+                    count--;
+                }else{
+                    item.setValueState("None");
+    count++;
+                }
+            })
+            if(count ==4){
+                bool = true;
+            }else{
+                bool = false;
+            }
+            return bool;
         }
     })
 

@@ -195,6 +195,7 @@ sap.ui.define([
                 var ChangeModel =this.getView().getModel("RunTimeModel");
                 ChangeModel.setData({});
                 ChangeModel.refresh(true);
+                sap.m.MessageToast.show("successfully created");
                 return;
 
             }
@@ -239,6 +240,7 @@ sap.ui.define([
                 model.setProperty('/dayTable', currentJson);
                 model.refresh(true);
                 TableSelctObj = {};
+                sap.m.MessageToast.show("successfully created");
             } else {
                 sap.m.MessageToast.show("Please select your project durations...");
             }
