@@ -1,4 +1,4 @@
-<mvc:View
+<mvc:View xmlns:tnt="sap.tnt" xmlns:uxap="sap.uxap"
     xmlns:macros="sap.fe.macros"
     xmlns:form="sap.ui.layout.form"
     xmlns:table="sap.ui.table"
@@ -138,6 +138,20 @@
                 width="auto"
                 height="auto"
             >
+            <headerToolbar>
+			<OverflowToolbar>
+				<Title text="Project Range In Table"/>
+				<ToolbarSpacer />
+				<Select forceSelection="false" change="YearChangeTablePress" >
+           <items>
+           <core:ListItem text="2024"></core:ListItem>
+            <core:ListItem text="2025"></core:ListItem>
+             <core:ListItem text="2026"></core:ListItem>
+           </items>
+           </Select>
+			</OverflowToolbar>
+		</headerToolbar>
+          
                 <content>
                     <table:Table
                         id="UiTable"

@@ -70,6 +70,12 @@
       },
       "RunTimeModel":{
          "type": "sap.ui.model.json.JSONModel"
+      },
+      "ColumnLayout":{
+         "type": "sap.ui.model.json.JSONModel"
+      },
+      "ActivityModel":{
+         "type": "sap.ui.model.json.JSONModel"
       }
     },
     "resources": {
@@ -102,8 +108,8 @@
       ],
       "targets": {
         "TargetRange1": {
-          "id": "Range1",
-          "name": "Range1"
+          "id": "FlexLayout",
+          "name": "FlexLayout"
         }
       }
     },

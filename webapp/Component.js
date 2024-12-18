@@ -44,6 +44,12 @@ sap.ui.define([
               const curtimeRangeSet = this.getModel("RunTimeModel");
               curtimeRangeSet.setData({});
               curtimeRangeSet.refresh(true);
+              const ActivityM = this.getModel("ActivityModel");
+              ActivityM.setData([]);
+              ActivityM.refresh(true);
+              var omdeol =this.getModel("ColumnLayout");
+              omdeol.setData({FLayout:"OneColumn"})
+              omdeol.refresh(true);
             this.getRouter().initialize();
         }
     });

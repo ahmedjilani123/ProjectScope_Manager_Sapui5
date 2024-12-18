@@ -5,8 +5,8 @@
 <Dialog title="Login">
 <content>
 <RadioButtonGroup id="group" columns="3" >
-<RadioButton text="User 1"></RadioButton>
-<RadioButton text="User 2"></RadioButton>
+<RadioButton text="activity 1"></RadioButton>
+<RadioButton text="activity 2"></RadioButton>
 </RadioButtonGroup>
 </content>
 <beginButton>

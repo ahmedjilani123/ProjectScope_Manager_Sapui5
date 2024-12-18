@@ -1,0 +1,9 @@
+<mvc:View xmlns:tnt="sap.tnt" xmlns:uxap="sap.uxap"
+   
+    controllerName="cal.as.sap.calendarcustom.controller.Range1"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+>
+    
+</mvc:View>

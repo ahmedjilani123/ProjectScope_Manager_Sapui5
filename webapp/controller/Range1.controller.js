@@ -10,18 +10,23 @@ sap.ui.define([
 ], (Basecontroller, MessageBox, MessageToast, JSONModel, CoreLibrary, UnifiedLibrary, CalendarLegendItem, DateTypeRange) => {
     "use strict";
     let TableSelctObj = {};
+    var ActivityAdd=1;
     var CalendarDayType = UnifiedLibrary.CalendarDayType,
         ValueState = CoreLibrary.ValueState;
     return Basecontroller.extend("cal.as.sap.calendarcustom.controller.Range1", {
         onInit() { },
+        YearChangeTablePress(e){
+            this.SelectionYearChange( parseInt(e.getParameter("selectedItem").getProperty("text")));
+        },
         onAfterRendering() {
             this.SelectionYearChange();
-            this.CreateDialog = undefined;
-            if (!this.CreateDialog) {
-                this.CreateDialog = new sap.ui.xmlfragment("cal.as.sap.calendarcustom.Fragments.UserLogin", this);
-                this.getView().addDependent(this.CreateDialog);
-            }
-            this.CreateDialog.open();
+            // this.CreateDialog = undefined;
+            // if (!this.CreateDialog) {
+            //                                                                                 // ActivityAdd to open
+            //     this.CreateDialog = new sap.ui.xmlfragment("cal.as.sap.calendarcustom.Fragments.ActivityAdd", this);
+            //     this.getView().addDependent(this.CreateDialog);
+            // }
+            // this.CreateDialog.open();
             const oLegend = this.byId("legend");
             oLegend.setStandardItems([""])
             var getAlldata = JSON.parse(localStorage.getItem("table"));
@@ -61,6 +66,9 @@ sap.ui.define([
         },
         NavigationPress(e) {
             debugger
+            var model = this.getOwnerComponent().getModel("ColumnLayout");
+            model.setData({FLayout:"TwoColumnsBeginExpanded"})
+            model.refresh(true);
         },
         UiButtonHandler: function (e) {
             debugger
@@ -90,15 +98,16 @@ sap.ui.define([
                     }
                     let from = parseInt(currentModel.rangeFromS);
                     let to = parseInt(seperate[0]);
+                    let durations = to - from;
                     while (from <= to) {
-                        if(to <=5){
+                        if(durations <=5){
                             e.getSource().getParent().getAggregation("cells")[from].setType("Accept");
                             e.getSource().setType("Accept");
-                        }else if(to <=10){
+                        }else if(durations <=10){
                             e.getSource().getParent().getAggregation("cells")[from].setType("Reject");
                             e.getSource().setType("Reject");
     
-                        }else if(to >=10){ 
+                        }else if(durations >=10){ 
                             e.getSource().getParent().getAggregation("cells")[from].setType("Emphasized");
                             e.getSource().setType("Emphasized");
                         }
@@ -150,15 +159,16 @@ sap.ui.define([
                     }
                     let from = parseInt(TableSelctObj.rangeFrom);
                     let to = parseInt(seperate[0]);
+                    let duration = to - from ;
                     while (from <= to) {
-                        if(to <=5){
+                        if(duration <=5){
                             e.getSource().getParent().getAggregation("cells")[from].setType("Accept");
                             e.getSource().setType("Accept");
-                        }else if(to <=10){
+                        }else if(duration <=10){
                             e.getSource().getParent().getAggregation("cells")[from].setType("Reject");
                             e.getSource().setType("Reject");
     
-                        }else if(to >=10){ 
+                        }else if(duration >=10){ 
                             e.getSource().getParent().getAggregation("cells")[from].setType("Emphasized");
                             e.getSource().setType("Emphasized");
                         }
@@ -196,6 +206,7 @@ sap.ui.define([
                 ChangeModel.setData({});
                 ChangeModel.refresh(true);
                 sap.m.MessageToast.show("successfully created");
+                this.SelectionYearChange();
                 return;
 
             }
@@ -205,7 +216,7 @@ sap.ui.define([
                 
                 if (this.getView().getModel("TableCalendarSelect").getData().CreateData) {
                     MainModelTable.forEach((item, i) => {
-                        if (item.UserRole == userLogin) {
+                        if (item.UniqID == TableSelctObj.UniqIds) {         // User is logged  if (item.UserRole == userLogin) {   
                             item.setFrom = TableSelctObj.MainFrom;
                             item.setTo = TableSelctObj.setTo;
                             item.rangeFromS=TableSelctObj.rangeFromS;
@@ -213,19 +224,23 @@ sap.ui.define([
                         }
                         currentJson.push(item);
                     })
+                   var s = this.getView().getModel("TableCalendarSelect");
+                   s.setProperty("/CreateData",false);
+                   s.refresh(true);
                 } else {
                     if (currentJson.length > 0) {
                         currentJson.forEach((ele, i) => {
-                            if (ele.UniqID == TableSelctObj.UniqIds && ele.UserRole === userLogin) {
+                            if (ele.UniqID == TableSelctObj.UniqIds) {
                                 ele.setFrom = TableSelctObj.MainFrom;
                                 ele.setTo = TableSelctObj.setTo;
                                 ele.rangeFromS=TableSelctObj.rangeFromS;
                                 ele.rangeToS=TableSelctObj.rangeToS;
+                                currentJson[i]=ele;
                             }
                         })
                     } else {
                         MainModelTable.forEach((item, i) => {
-                            if (item.UserRole == userLogin) {
+                              if (item.UniqID ==TableSelctObj.UniqIds ) { // compare user if (item.UserRole == userLogin)
                                 item.setFrom = TableSelctObj.MainFrom;
                                 item.setTo = TableSelctObj.setTo;
                                 item.rangeFromS=TableSelctObj.rangeFromS;
@@ -241,6 +256,7 @@ sap.ui.define([
                 model.refresh(true);
                 TableSelctObj = {};
                 sap.m.MessageToast.show("successfully created");
+                this.SelectionYearChange();
             } else {
                 sap.m.MessageToast.show("Please select your project durations...");
             }
@@ -252,6 +268,24 @@ sap.ui.define([
             model.setProperty('/UserLogin', User);
             model.refresh(true);
             e.getSource().getParent().close();
+        },
+        handleCloseSideScreenPress(){
+            var model = this.getOwnerComponent().getModel("ColumnLayout");
+            model.setData({FLayout:"OneColumn"})
+            model.refresh(true);
+        },
+        AddActivityPress(){
+            var model = this.getOwnerComponent().getModel("ActivityModel")
+            var arr =model.getData();
+            arr.push({Label:'Activity '+ActivityAdd++,Value:""})
+            model.refresh(true);
+        },
+        DeleteInputListPress(e){
+            var currentInput = parseInt(e.getParameter("listItem").getBindingContext("ActivityModel").getPath().split("/").pop());
+            var model = this.getOwnerComponent().getModel("ActivityModel")
+        model.getData().splice(currentInput,1);
+          
+            model.refresh(true);
         }
     });
 });

@@ -1,0 +1,30 @@
+<c:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:c="sap.ui.core" xmlns:form="sap.ui.layout.form"
+    xmlns:table="sap.ui.table"
+    xmlns:unified="sap.ui.unified"
+>
+<Dialog title="Activity Add">
+<content>
+
+             
+                <List items="{ActivityModel>/}" mode="Delete" delete="DeleteInputListPress">
+                <items>
+                <InputListItem label="{ActivityModel>Label}">
+			<Input
+				value="{ActivityModel>Value}"
+				 />
+		</InputListItem>
+                </items>
+                </List>
+                  <OverflowToolbar >
+                  <ToolbarSpacer ></ToolbarSpacer>
+                  <Button icon="sap-icon://add" press="AddActivityPress"></Button>
+                  </OverflowToolbar>
+                
+</content>
+<beginButton>
+<Button text="Send" press="AddProjectActivityPress"></Button>
+</beginButton>
+</Dialog>
+</c:FragmentDefinition>
