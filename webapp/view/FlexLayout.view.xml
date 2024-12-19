@@ -20,7 +20,11 @@
                            <!-- <mvc:XMLView viewName="cal.as.sap.calendarcustom.view.Range1"/> -->
                 </f:beginColumnPages>
                 <f:midColumnPages>
-                    <Page  showHeader="true" showNavButton="true" navButtonPress="handleCloseSideScreenPress" >
+                    <Page  showHeader="true" title="Details" showNavButton="true" navButtonPress="handleCloseSideScreenPress" >
+                    <headerContent>
+                    <ToggleButton pressed="false" icon="sap-icon://add" press="ShowFromInputPress"></ToggleButton>
+                    <Button ></Button>
+                    </headerContent>
                    
                 <content>
                   <core:Fragment  fragmentName="cal.as.sap.calendarcustom.view.DetailPage" type="XML"/>

@@ -10,7 +10,7 @@ sap.ui.define([
 ], (Basecontroller, MessageBox, MessageToast, JSONModel, CoreLibrary, UnifiedLibrary, CalendarLegendItem, DateTypeRange) => {
     "use strict";
     let TableSelctObj = {};
-    var ActivityAdd=1;
+    var ActivityAdd=2;
     var CalendarDayType = UnifiedLibrary.CalendarDayType,
         ValueState = CoreLibrary.ValueState;
     return Basecontroller.extend("cal.as.sap.calendarcustom.controller.Range1", {
@@ -69,6 +69,10 @@ sap.ui.define([
             var model = this.getOwnerComponent().getModel("ColumnLayout");
             model.setData({FLayout:"TwoColumnsBeginExpanded"})
             model.refresh(true);
+            var ActivytM =this.getView().getModel("ActivityModel");
+            var UniquiId = e.getSource().getBindingContext("TableCalendarSelect").getObject().UniqID;
+            ActivytM.setProperty("/UniqID",UniquiId);
+            ActivytM.refresh(true);
         },
         UiButtonHandler: function (e) {
             debugger
@@ -276,16 +280,69 @@ sap.ui.define([
         },
         AddActivityPress(){
             var model = this.getOwnerComponent().getModel("ActivityModel")
-            var arr =model.getData();
+            var arr =model.getData().item;
             arr.push({Label:'Activity '+ActivityAdd++,Value:""})
             model.refresh(true);
         },
         DeleteInputListPress(e){
             var currentInput = parseInt(e.getParameter("listItem").getBindingContext("ActivityModel").getPath().split("/").pop());
             var model = this.getOwnerComponent().getModel("ActivityModel")
-        model.getData().splice(currentInput,1);
+        model.getData().item.splice(currentInput,1);
+        ActivityAdd--;
           
             model.refresh(true);
-        }
+        },
+        ShowFromInputPress(e){
+            const ActivityM = this.getView().getModel("ActivityModel");
+            if(e.getParameter("pressed")){
+                ActivityM.setProperty("/ShowFormInput",true);
+                debugger
+                e.getSource().setIcon("sap-icon://less")
+            }else{
+                ActivityM.setProperty("/ShowFormInput",false);
+                e.getSource().setIcon("sap-icon://add")   
+            }
+            ActivityM.refresh(true);
+        },
+        ActivitySubItemPress(e){
+            debugger
+            const ActivityM = this.getView().getModel("ActivityModel");
+           let {subtitle,subDesc,sID,subItemAc} = ActivityM.getData();
+           if(subtitle.trim() == ""){
+            sap.m.MessageToast.show("Please enter a title");
+            return;
+           }else if(subDesc.trim() ==""){
+            sap.m.MessageToast.show("Please enter a description");
+            return;
+           }else{
+            if(sID){
+                subItemAc.forEach((item)=>{
+                    if(item.sID == sID){
+                        item.subtitle =subtitle
+                        item.subDesc = subDesc;
+                    }
+                })
+            }else{
+
+                subItemAc.push({MainTaskID:ActivityM.getData().UniqID,subtitle:ActivityM.getData().subtitle, subDesc:ActivityM.getData().subDesc,sID:Math.floor(10000 + Math.random() * 90000)});
+            }
+            ActivityM.setProperty("/subtitle","");
+            ActivityM.setProperty("/subDesc","");
+            ActivityM.setProperty("/sID","");
+            ActivityM.refresh(true);
+           }
+
+
+        },
+    changeDataSubItemPress(e){
+        debugger
+        var obj = e.getSource().getBindingContext("ActivityModel").getObject();
+        var ActivityM =  this.getView().getModel("ActivityModel");
+        ActivityM.setProperty("/subtitle",obj.subtitle);
+        ActivityM.setProperty("/ShowFormInput",true);
+        ActivityM.setProperty("/subDesc",obj.subDesc);
+        ActivityM.setProperty("/sID",obj.sID);
+        ActivityM.refresh(true);
+    }
     });
 });

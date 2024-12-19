@@ -8,7 +8,7 @@
 <content>
 
              
-                <List items="{ActivityModel>/}" mode="Delete" delete="DeleteInputListPress">
+                <List items="{ActivityModel>/item}" mode="Delete" delete="DeleteInputListPress">
                 <items>
                 <InputListItem label="{ActivityModel>Label}">
 			<Input

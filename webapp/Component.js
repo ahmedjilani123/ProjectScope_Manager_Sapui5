@@ -45,7 +45,9 @@ sap.ui.define([
               curtimeRangeSet.setData({});
               curtimeRangeSet.refresh(true);
               const ActivityM = this.getModel("ActivityModel");
-              ActivityM.setData([]);
+              ActivityM.setProperty("/ShowFormInput",false);
+              ActivityM.setProperty("/subItemAc",[]);
+              ActivityM.setProperty("/item",[{Label:"Activity 1", Value:""}]);
               ActivityM.refresh(true);
               var omdeol =this.getModel("ColumnLayout");
               omdeol.setData({FLayout:"OneColumn"})

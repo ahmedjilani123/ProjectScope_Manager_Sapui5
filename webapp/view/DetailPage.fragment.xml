@@ -1,9 +1,68 @@
 <mvc:View xmlns:tnt="sap.tnt" xmlns:uxap="sap.uxap"
-   
+    xmlns:form="sap.ui.layout.form"
     controllerName="cal.as.sap.calendarcustom.controller.Range1"
     xmlns:mvc="sap.ui.core.mvc"
     xmlns="sap.m"
     xmlns:core="sap.ui.core"
 >
+    <Panel headerText="Add Configuration Details" class="sapUiResponsiveMargin" width="auto" visible="{ActivityModel>/ShowFormInput}">
+    <content>
+      <form:Form editable="true">
+                        <form:layout>
+                            <form:ResponsiveGridLayout
+                                labelSpanXL="3"
+                                labelSpanL="3"
+                                labelSpanM="3"
+                                labelSpanS="12"
+                                adjustLabelSpan="false"
+                                emptySpanXL="4"
+                                emptySpanL="4"
+                                emptySpanM="4"
+                                emptySpanS="0"
+                                columnsXL="1"
+                                columnsL="1"
+                                columnsM="1"
+                                singleContainerFullSize="false"
+                            />
+                        </form:layout>
+                        <form:formContainers>
+                            <form:FormContainer>
+                                <form:formElements >
+                 <form:FormElement label="ID" visible="{= ${ActivityModel>/sID}? true : false}">
+                                        <form:fields>
+                                           <Input value="{ActivityModel>/sID}" enabled="false"></Input>
+                                        </form:fields>
+                                    </form:FormElement>
+                                  
+                                    <form:FormElement label="Title ">
+                                        <form:fields>
+                                           <Input value="{ActivityModel>/subtitle}" required="true"></Input>
+                                        </form:fields>
+                                    </form:FormElement>
+                                     <form:FormElement label="Decription">
+                                        <form:fields>
+                                           <TextArea cols="20" value="{ActivityModel>/subDesc}" rows="3"/>
+                                        </form:fields>
+                                    </form:FormElement>
+                                     <form:FormElement label="">
+                                        <form:fields>
+                                           <Button text="Submit" press="ActivitySubItemPress"></Button>
+                                        </form:fields>
+                                    </form:FormElement>
+                                </form:formElements>
+                            </form:FormContainer>
+                        </form:formContainers>
+                    </form:Form>
+    </content>
+    </Panel>
+    <Panel headerText="Task" class="sapUiResponsiveMargin" width="auto" >
+    <content>
+    <List items="{ActivityModel>/subItemAc}" >
+    <items>
     
+    <StandardListItem detailPress="changeDataSubItemPress" title="{ActivityModel>subtitle}" info="Completed" infoState="Success" type="Detail" wrapCharLimit="60" description="{ActivityModel>subDesc}"></StandardListItem>
+    </items>
+    </List>
+    </content>
+    </Panel>
 </mvc:View>

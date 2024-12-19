@@ -48,7 +48,7 @@ sap.ui.define([
                 // -------------------------create a json model ----------------
                 const DayArrayValue = []; // Day Array 
                 const se = this.getView().getModel("ActivityModel").getData()
-                se.forEach((itemUser) => {
+                se.item.forEach((itemUser) => {
                     let count = 1;
                     let dayObj = { ProjectName: projectDetail + '-' + itemUser.Value };
                     GetMonthIndex.forEach((item, i) => {
@@ -106,9 +106,9 @@ sap.ui.define([
                                     { path: "TableCalendarSelect>" }   // get current object
                                 ],
                                 formatter: this.typeFormatter.bind(this),
-                            }, visible: "{= ${TableCalendarSelect>fullDay" + item.year + day + item.month + "} ? true : false }", press: this.UiButtonHandler.bind(this)
+                            },enabled: "{= ${TableCalendarSelect>setTo} ? false : true}" ,visible: "{= ${TableCalendarSelect>fullDay" + item.year + day + item.month + "} ? true : false }", press: this.UiButtonHandler.bind(this)
                         }),
-                        //enabled: "{= ${TableCalendarSelect>UserRole} === ${TableCalendarSelect>/UserLogin}}"
+                        //enabled: "{= ${TableCalendarSelect>setTo} === ${TableCalendarSelect>/UserLogin}}"
                         //if user 1 is selected then is enabled true otherwise false if login user 2 then is enabled second row is editable true
                     });
                     oUiTable.addColumn(columss);
@@ -121,13 +121,20 @@ sap.ui.define([
         },
         SubmitProjectDetailsHandler: function () {
             debugger
-            if (!this.CreateDialog) {
-                // ActivityAdd to open
-                this.CreateDialog = new sap.ui.xmlfragment("cal.as.sap.calendarcustom.Fragments.ActivityAdd", this);
-                this.getView().addDependent(this.CreateDialog);
+            let InputSource = [this.getView().byId("FromDateID"), this.getView().byId("ToDateID"), this.getView().byId("InpuProjectID")]
+            let ValidateAll = this.ValidationsAllInput(InputSource);
+            if(ValidateAll){
+                if (!this.CreateDialog) {
+                    // ActivityAdd to open
+                    this.CreateDialog = new sap.ui.xmlfragment("cal.as.sap.calendarcustom.Fragments.ActivityAdd", this);
+                    this.getView().addDependent(this.CreateDialog);
+                }
+                this.CreateDialog.open();
+    
+            }else{
+                sap.m.MessageToast.show("please input field....");
             }
-            this.CreateDialog.open();
-
+          
         },
         getDateRange(from, to) {
             const fromDate = new Date(...from.split("-").map(Number)); // Start date
