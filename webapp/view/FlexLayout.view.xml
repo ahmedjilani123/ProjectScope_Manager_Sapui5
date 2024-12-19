@@ -22,7 +22,7 @@
                 <f:midColumnPages>
                     <Page  showHeader="true" title="Details" showNavButton="true" navButtonPress="handleCloseSideScreenPress" >
                     <headerContent>
-                    <ToggleButton pressed="false" icon="sap-icon://add" press="ShowFromInputPress"></ToggleButton>
+                    <ToggleButton id="toggleId" pressed="true" icon="sap-icon://less" press="ShowFromInputPress"></ToggleButton>
                     <Button ></Button>
                     </headerContent>
                    

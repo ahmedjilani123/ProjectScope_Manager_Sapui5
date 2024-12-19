@@ -70,6 +70,7 @@ sap.ui.define([
             model.setData({FLayout:"TwoColumnsBeginExpanded"})
             model.refresh(true);
             var ActivytM =this.getView().getModel("ActivityModel");
+            ActivytM.setProperty("/ShowFormInput",true);
             var UniquiId = e.getSource().getBindingContext("TableCalendarSelect").getObject().UniqID;
             ActivytM.setProperty("/UniqID",UniquiId);
             ActivytM.refresh(true);
@@ -306,6 +307,7 @@ sap.ui.define([
         },
         ActivitySubItemPress(e){
             debugger
+            var se = this.getView().byId("toggleId");
             const ActivityM = this.getView().getModel("ActivityModel");
            let {subtitle,subDesc,sID,subItemAc} = ActivityM.getData();
            if(subtitle.trim() == ""){
@@ -326,6 +328,9 @@ sap.ui.define([
 
                 subItemAc.push({MainTaskID:ActivityM.getData().UniqID,subtitle:ActivityM.getData().subtitle, subDesc:ActivityM.getData().subDesc,sID:Math.floor(10000 + Math.random() * 90000)});
             }
+se.setIcon("sap-icon://add")
+ActivityM.setProperty("/ShowFormInput",false);
+se.setPressed(false);
             ActivityM.setProperty("/subtitle","");
             ActivityM.setProperty("/subDesc","");
             ActivityM.setProperty("/sID","");

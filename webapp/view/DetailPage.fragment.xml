@@ -60,7 +60,7 @@
     <List items="{ActivityModel>/subItemAc}" >
     <items>
     
-    <StandardListItem detailPress="changeDataSubItemPress" title="{ActivityModel>subtitle}" info="Completed" infoState="Success" type="Detail" wrapCharLimit="60" description="{ActivityModel>subDesc}"></StandardListItem>
+    <StandardListItem detailPress="changeDataSubItemPress" title="{ActivityModel>subtitle}" info="Completed" infoState="Success" type="Detail" wrapCharLimit="60" wrapping="true" description="{ActivityModel>subDesc}"></StandardListItem>
     </items>
     </List>
     </content>
