@@ -66,6 +66,10 @@ sap.ui.define([
         },
         NavigationPress(e) {
             debugger
+            var se = this.getView().byId("toggleId");
+            se.setIcon("sap-icon://less")
+        
+            se.setPressed(true);
             var model = this.getOwnerComponent().getModel("ColumnLayout");
             model.setData({FLayout:"TwoColumnsBeginExpanded"})
             model.refresh(true);
@@ -328,6 +332,7 @@ sap.ui.define([
 
                 subItemAc.push({MainTaskID:ActivityM.getData().UniqID,subtitle:ActivityM.getData().subtitle, subDesc:ActivityM.getData().subDesc,sID:Math.floor(10000 + Math.random() * 90000)});
             }
+            
 se.setIcon("sap-icon://add")
 ActivityM.setProperty("/ShowFormInput",false);
 se.setPressed(false);
