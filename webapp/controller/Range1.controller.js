@@ -10,13 +10,13 @@ sap.ui.define([
 ], (Basecontroller, MessageBox, MessageToast, JSONModel, CoreLibrary, UnifiedLibrary, CalendarLegendItem, DateTypeRange) => {
     "use strict";
     let TableSelctObj = {};
-    var ActivityAdd=2;
+    var ActivityAdd = 2;
     var CalendarDayType = UnifiedLibrary.CalendarDayType,
         ValueState = CoreLibrary.ValueState;
     return Basecontroller.extend("cal.as.sap.calendarcustom.controller.Range1", {
         onInit() { },
-        YearChangeTablePress(e){
-            this.SelectionYearChange( parseInt(e.getParameter("selectedItem").getProperty("text")));
+        YearChangeTablePress(e) {
+            this.SelectionYearChange(parseInt(e.getParameter("selectedItem").getProperty("text")));
         },
         onAfterRendering() {
             this.SelectionYearChange();
@@ -68,38 +68,48 @@ sap.ui.define([
             debugger
             var se = this.getView().byId("toggleId");
             se.setIcon("sap-icon://less")
-        
+
             se.setPressed(true);
+            var loc = localStorage.getItem("ActivitySubItem");
+            let localDtaGet = loc ? JSON.parse(loc) : [];
             var model = this.getOwnerComponent().getModel("ColumnLayout");
-            model.setData({FLayout:"TwoColumnsBeginExpanded"})
+            model.setData({ FLayout: "TwoColumnsBeginExpanded" })
             model.refresh(true);
-            var ActivytM =this.getView().getModel("ActivityModel");
-            ActivytM.setProperty("/ShowFormInput",true);
+            var ActivytM = this.getView().getModel("ActivityModel");
+
+            ActivytM.setProperty("/ShowFormInput", true);
             var UniquiId = e.getSource().getBindingContext("TableCalendarSelect").getObject().UniqID;
-            ActivytM.setProperty("/UniqID",UniquiId);
+            var SubData = [];
+            localDtaGet.forEach(item => {
+                if (item.MainTaskID == UniquiId) {
+                    SubData.push(item);
+                }
+            })
+            ActivytM.setProperty("/subItemAc", SubData);
+            ActivytM.setProperty("/UniqID", UniquiId);
             ActivytM.refresh(true);
         },
         UiButtonHandler: function (e) {
             debugger
-            let modelss =e.getSource().getBindingContext("TableCalendarSelect").getObject()
+            let modelss = e.getSource().getBindingContext("TableCalendarSelect").getObject()
             let SelectAUniqID = modelss.UniqID
             let stringsIfy = JSON.stringify(modelss);
             let modelssC = JSON.parse(stringsIfy);
-            var currentModel= this.getOwnerComponent().getModel("RunTimeModel").getData();
+            var currentModel = this.getOwnerComponent().getModel("RunTimeModel").getData();
             var seperate = e.getSource().getProperty("fieldGroupIds")[0].split("|");
-            if(modelssC.rangeFromS && modelssC.rangeToS && modelssC.setFrom && modelssC.setTo){
-                if(currentModel.setFrom){
-                    if(currentModel.setTo){
+            if (modelssC.rangeFromS && modelssC.rangeToS && modelssC.setFrom && modelssC.setTo) {
+                if (currentModel.setFrom) {
+                    if (currentModel.setTo) {
                         let from = parseInt(currentModel.rangeFromS);
                         let to = parseInt(currentModel.rangeToS);
                         while (from <= to) {
                             e.getSource().getParent().getAggregation("cells")[from].setType("Default");
                             from += 1;
                         }
-                        modelssC.rangeFromS =parseInt(seperate[0]);
-                        modelssC.setFrom =seperate[1]
-                        modelssC.setTo=undefined;
-                        var model= this.getView().getModel("RunTimeModel");
+                        modelssC.rangeFromS = parseInt(seperate[0]);
+                        modelssC.setFrom = seperate[1]
+                        modelssC.setTo = undefined;
+                        var model = this.getView().getModel("RunTimeModel");
                         model.setData(modelssC);
                         model.refresh(true);
                         e.getSource().setType("Emphasized");
@@ -109,14 +119,14 @@ sap.ui.define([
                     let to = parseInt(seperate[0]);
                     let durations = to - from;
                     while (from <= to) {
-                        if(durations <=5){
+                        if (durations <= 5) {
                             e.getSource().getParent().getAggregation("cells")[from].setType("Accept");
                             e.getSource().setType("Accept");
-                        }else if(durations <=10){
+                        } else if (durations <= 10) {
                             e.getSource().getParent().getAggregation("cells")[from].setType("Reject");
                             e.getSource().setType("Reject");
-    
-                        }else if(durations >=10){ 
+
+                        } else if (durations >= 10) {
                             e.getSource().getParent().getAggregation("cells")[from].setType("Emphasized");
                             e.getSource().setType("Emphasized");
                         }
@@ -124,12 +134,12 @@ sap.ui.define([
                     }
                     // final data source
                     currentModel.setTo = seperate[1];
-                    currentModel.rangeToS =to;
-                    var model= this.getView().getModel("RunTimeModel");
+                    currentModel.rangeToS = to;
+                    var model = this.getView().getModel("RunTimeModel");
                     model.setData(currentModel);
                     model.refresh(true);
 
-                }else{
+                } else {
                     var rangess = modelssC.rangeFromS; // main model data source
                     while (rangess <= modelssC.rangeToS) {
                         e.getSource().getParent().getAggregation("cells")[rangess].setType("Default");
@@ -139,45 +149,45 @@ sap.ui.define([
                     delete modelssC.rangeFromS;
                     delete modelssC.setFrom;
                     delete modelssC.setTo;
-                    modelssC.rangeFromS =parseInt(seperate[0]);
-                    modelssC.setFrom =seperate[1]
-                    modelssC.setTo=undefined;
-                    var model= this.getView().getModel("RunTimeModel");
+                    modelssC.rangeFromS = parseInt(seperate[0]);
+                    modelssC.setFrom = seperate[1]
+                    modelssC.setTo = undefined;
+                    var model = this.getView().getModel("RunTimeModel");
                     model.setData(modelssC);
                     model.refresh(true);
                     e.getSource().setType("Emphasized");
                 }
-              
-                return; 
+
+                return;
                 // model changes end ---
-            }else{
+            } else {
                 if (TableSelctObj.MainFrom) {
-               
-                    if(TableSelctObj.setTo){
+
+                    if (TableSelctObj.setTo) {
                         let from = parseInt(TableSelctObj.rangeFrom);
                         let to = parseInt(TableSelctObj.rangeToS);
                         while (from <= to) {
                             e.getSource().getParent().getAggregation("cells")[from].setType("Default");
                             from += 1;
                         }
-                        TableSelctObj.rangeFrom=parseInt(seperate[0]);
-                        TableSelctObj.setTo=undefined;
+                        TableSelctObj.rangeFrom = parseInt(seperate[0]);
+                        TableSelctObj.setTo = undefined;
                         TableSelctObj.MainFrom = seperate[1]
                         e.getSource().setType("Emphasized");
                         return;
                     }
                     let from = parseInt(TableSelctObj.rangeFrom);
                     let to = parseInt(seperate[0]);
-                    let duration = to - from ;
+                    let duration = to - from;
                     while (from <= to) {
-                        if(duration <=5){
+                        if (duration <= 5) {
                             e.getSource().getParent().getAggregation("cells")[from].setType("Accept");
                             e.getSource().setType("Accept");
-                        }else if(duration <=10){
+                        } else if (duration <= 10) {
                             e.getSource().getParent().getAggregation("cells")[from].setType("Reject");
                             e.getSource().setType("Reject");
-    
-                        }else if(duration >=10){ 
+
+                        } else if (duration >= 10) {
                             e.getSource().getParent().getAggregation("cells")[from].setType("Emphasized");
                             e.getSource().setType("Emphasized");
                         }
@@ -185,33 +195,33 @@ sap.ui.define([
                     }
                     TableSelctObj.setTo = seperate[1];
                     TableSelctObj.UniqIds = SelectAUniqID;
-                    TableSelctObj.rangeFromS =parseInt(TableSelctObj.rangeFrom);
-                    TableSelctObj.rangeToS =to;
-                   
+                    TableSelctObj.rangeFromS = parseInt(TableSelctObj.rangeFrom);
+                    TableSelctObj.rangeToS = to;
+
                 } else {
                     TableSelctObj.rangeFrom = parseInt(seperate[0]);
                     TableSelctObj.MainFrom = seperate[1]
                     e.getSource().setType("Emphasized");
                 }
             }
-           
+
         },
         SubmitDateRangePress() {
             console.log(TableSelctObj);
             debugger
             var modelData = this.getView().getModel("RunTimeModel").getData();
             var currentJson = JSON.parse(localStorage.getItem("table")) || [];
-            if(modelData?.setFrom){
+            if (modelData?.setFrom) {
                 currentJson.forEach((ele, i) => {
                     if (ele.UniqID == modelData.UniqID) {
-                        currentJson[i]=modelData;
+                        currentJson[i] = modelData;
                     }
                 })
                 var model = this.getView().getModel("TableCalendarSelect");
                 localStorage.setItem("table", JSON.stringify(currentJson));
                 model.setProperty('/dayTable', currentJson);
                 model.refresh(true);
-                var ChangeModel =this.getView().getModel("RunTimeModel");
+                var ChangeModel = this.getView().getModel("RunTimeModel");
                 ChangeModel.setData({});
                 ChangeModel.refresh(true);
                 sap.m.MessageToast.show("successfully created");
@@ -222,38 +232,38 @@ sap.ui.define([
             if (TableSelctObj?.MainFrom) {
                 var userLogin = this.getView().getModel("TableCalendarSelect").getData().UserLogin;
                 let MainModelTable = this.getView().getModel("TableCalendarSelect").getData().dayTable;
-                
+
                 if (this.getView().getModel("TableCalendarSelect").getData().CreateData) {
                     MainModelTable.forEach((item, i) => {
                         if (item.UniqID == TableSelctObj.UniqIds) {         // User is logged  if (item.UserRole == userLogin) {   
                             item.setFrom = TableSelctObj.MainFrom;
                             item.setTo = TableSelctObj.setTo;
-                            item.rangeFromS=TableSelctObj.rangeFromS;
-                            item.rangeToS=TableSelctObj.rangeToS;
+                            item.rangeFromS = TableSelctObj.rangeFromS;
+                            item.rangeToS = TableSelctObj.rangeToS;
                         }
                         currentJson.push(item);
                     })
-                   var s = this.getView().getModel("TableCalendarSelect");
-                   s.setProperty("/CreateData",false);
-                   s.refresh(true);
+                    var s = this.getView().getModel("TableCalendarSelect");
+                    s.setProperty("/CreateData", false);
+                    s.refresh(true);
                 } else {
                     if (currentJson.length > 0) {
                         currentJson.forEach((ele, i) => {
                             if (ele.UniqID == TableSelctObj.UniqIds) {
                                 ele.setFrom = TableSelctObj.MainFrom;
                                 ele.setTo = TableSelctObj.setTo;
-                                ele.rangeFromS=TableSelctObj.rangeFromS;
-                                ele.rangeToS=TableSelctObj.rangeToS;
-                                currentJson[i]=ele;
+                                ele.rangeFromS = TableSelctObj.rangeFromS;
+                                ele.rangeToS = TableSelctObj.rangeToS;
+                                currentJson[i] = ele;
                             }
                         })
                     } else {
                         MainModelTable.forEach((item, i) => {
-                              if (item.UniqID ==TableSelctObj.UniqIds ) { // compare user if (item.UserRole == userLogin)
+                            if (item.UniqID == TableSelctObj.UniqIds) { // compare user if (item.UserRole == userLogin)
                                 item.setFrom = TableSelctObj.MainFrom;
                                 item.setTo = TableSelctObj.setTo;
-                                item.rangeFromS=TableSelctObj.rangeFromS;
-                                item.rangeToS=TableSelctObj.rangeToS;
+                                item.rangeFromS = TableSelctObj.rangeFromS;
+                                item.rangeToS = TableSelctObj.rangeToS;
                             }
                             currentJson.push(item);
                         })
@@ -278,81 +288,93 @@ sap.ui.define([
             model.refresh(true);
             e.getSource().getParent().close();
         },
-        handleCloseSideScreenPress(){
+        handleCloseSideScreenPress() {
             var model = this.getOwnerComponent().getModel("ColumnLayout");
-            model.setData({FLayout:"OneColumn"})
+            model.setData({ FLayout: "OneColumn" })
             model.refresh(true);
         },
-        AddActivityPress(){
+        AddActivityPress() {
             var model = this.getOwnerComponent().getModel("ActivityModel")
-            var arr =model.getData().item;
-            arr.push({Label:'Activity '+ActivityAdd++,Value:""})
+            var arr = model.getData().item;
+            arr.push({ Label: 'Activity ' + ActivityAdd++, Value: "" })
             model.refresh(true);
         },
-        DeleteInputListPress(e){
+        DeleteInputListPress(e) {
             var currentInput = parseInt(e.getParameter("listItem").getBindingContext("ActivityModel").getPath().split("/").pop());
             var model = this.getOwnerComponent().getModel("ActivityModel")
-        model.getData().item.splice(currentInput,1);
-        ActivityAdd--;
-          
+            model.getData().item.splice(currentInput, 1);
+            ActivityAdd--;
+
             model.refresh(true);
         },
-        ShowFromInputPress(e){
+        ShowFromInputPress(e) {
             const ActivityM = this.getView().getModel("ActivityModel");
-            if(e.getParameter("pressed")){
-                ActivityM.setProperty("/ShowFormInput",true);
+            if (e.getParameter("pressed")) {
+                ActivityM.setProperty("/ShowFormInput", true);
                 debugger
                 e.getSource().setIcon("sap-icon://less")
-            }else{
-                ActivityM.setProperty("/ShowFormInput",false);
-                e.getSource().setIcon("sap-icon://add")   
+            } else {
+                ActivityM.setProperty("/ShowFormInput", false);
+                e.getSource().setIcon("sap-icon://add")
             }
             ActivityM.refresh(true);
         },
-        ActivitySubItemPress(e){
+        ActivitySubItemPress(e) {
             debugger
+            let loc = localStorage.getItem("ActivitySubItem"),
+                localData = loc ? JSON.parse(loc) : [];
             var se = this.getView().byId("toggleId");
             const ActivityM = this.getView().getModel("ActivityModel");
-           let {subtitle,subDesc,sID,subItemAc} = ActivityM.getData();
-           if(subtitle.trim() == ""){
-            sap.m.MessageToast.show("Please enter a title");
-            return;
-           }else if(subDesc.trim() ==""){
-            sap.m.MessageToast.show("Please enter a description");
-            return;
-           }else{
-            if(sID){
-                subItemAc.forEach((item)=>{
-                    if(item.sID == sID){
-                        item.subtitle =subtitle
-                        item.subDesc = subDesc;
-                    }
-                })
-            }else{
+            let { subtitle, subDesc, sID, subItemAc } = ActivityM.getData();
+            if (subtitle?.trim() == "") {
+                sap.m.MessageToast.show("Please enter a title");
+                return;
+            } else if (subDesc?.trim() == "") {
+                sap.m.MessageToast.show("Please enter a description");
+                return;
+            } else {
+                if (sID) {
+                    localData.forEach((item, i) => {
+                        if (item.sID == sID) {
+                            item.subtitle = subtitle
+                            item.subDesc = subDesc;
+                            localData[i] = { ...item };
+                        }
 
-                subItemAc.push({MainTaskID:ActivityM.getData().UniqID,subtitle:ActivityM.getData().subtitle, subDesc:ActivityM.getData().subDesc,sID:Math.floor(10000 + Math.random() * 90000)});
+                    })
+                    localStorage.setItem("ActivitySubItem", JSON.stringify(localData));
+                    subItemAc.forEach((item) => {
+                        if (item.sID == sID) {
+                            item.subtitle = subtitle
+                            item.subDesc = subDesc;
+                        }
+                    })
+                } else {
+                    localData.push({ MainTaskID: ActivityM.getData().UniqID, subtitle: ActivityM.getData().subtitle, subDesc: ActivityM.getData().subDesc, sID: Math.floor(10000 + Math.random() * 90000) });
+                    localStorage.setItem("ActivitySubItem", JSON.stringify(localData));
+                    subItemAc.push({ MainTaskID: ActivityM.getData().UniqID, subtitle: ActivityM.getData().subtitle, subDesc: ActivityM.getData().subDesc, sID: Math.floor(10000 + Math.random() * 90000) });
+                }
+
+                se.setIcon("sap-icon://add")
+                ActivityM.setProperty("/ShowFormInput", false);
+                se.setPressed(false);
+                ActivityM.setProperty("/subtitle", "");
+                ActivityM.setProperty("/subDesc", "");
+                ActivityM.setProperty("/sID", "");
+                ActivityM.refresh(true);
             }
-            
-se.setIcon("sap-icon://add")
-ActivityM.setProperty("/ShowFormInput",false);
-se.setPressed(false);
-            ActivityM.setProperty("/subtitle","");
-            ActivityM.setProperty("/subDesc","");
-            ActivityM.setProperty("/sID","");
-            ActivityM.refresh(true);
-           }
 
 
         },
-    changeDataSubItemPress(e){
-        debugger
-        var obj = e.getSource().getBindingContext("ActivityModel").getObject();
-        var ActivityM =  this.getView().getModel("ActivityModel");
-        ActivityM.setProperty("/subtitle",obj.subtitle);
-        ActivityM.setProperty("/ShowFormInput",true);
-        ActivityM.setProperty("/subDesc",obj.subDesc);
-        ActivityM.setProperty("/sID",obj.sID);
-        ActivityM.refresh(true);
-    }
+        changeDataSubItemPress(e) {
+            debugger
+            var obj = e.getSource().getBindingContext("ActivityModel").getObject();
+            var ActivityM = this.getView().getModel("ActivityModel");
+            ActivityM.setProperty("/subtitle", obj.subtitle);
+            ActivityM.setProperty("/ShowFormInput", true);
+            ActivityM.setProperty("/subDesc", obj.subDesc);
+            ActivityM.setProperty("/sID", obj.sID);
+            ActivityM.refresh(true);
+        }
     });
 });
