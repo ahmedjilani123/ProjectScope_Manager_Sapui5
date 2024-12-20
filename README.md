@@ -3,4 +3,4 @@
 
 | Description         | Link                                   |
 |---------------------|----------------------------------------|
-| View Application    | [Project TimeLineSapui5](https://projecttimelinesap.netlify.app) |
+| View Application    | [Project Time Line Sapui5](https://projecttimelinesap.netlify.app) |
